@@ -16,7 +16,7 @@ export const createKvStore = (
   const kvStore = new Map();
   const listeners = new Map();
   const scopeTracking = new Map();
-  let count = 0;
+  let count = BigInt(0);
 
   const useKVStore = <K extends PropertyKey, T>(
     propKey: K,
@@ -24,11 +24,7 @@ export const createKvStore = (
   ): [T, (newValue: T) => void] => {
     count++;
     let key = propKey;
-    const newScope = {
-      count,
-      propKey,
-      initialValue,
-    };
+    const newScope = `${propKey.toString()}.${count.toString()}`;
     const [thisScope, setScope] = useState<any>(null);
     const lsKey = `${localStorageKey}.${key.toString()}`;
 
@@ -46,7 +42,7 @@ export const createKvStore = (
       }
 
       if (trackAndIsolate) {
-        return "something";
+        return initialValue || "";
       }
 
       kvStore.set(key, initialValue);
@@ -59,7 +55,6 @@ export const createKvStore = (
         key = scopeTracking.get(propKey);
         scopeTracking.delete(propKey);
         console.log("setting scope (top level)", key);
-        if (key === undefined) debugger;
         setScope(key);
         setKVStore(initialValue);
       }
@@ -87,16 +82,17 @@ export const createKvStore = (
           kvStore.size,
           scopeTracking.size,
           listeners.size,
-          thisScope
+          thisScope,
+          key
         );
-        scopeTracking.delete(key);
-        kvStore.delete(thisScope);
-        // listeners.set(thisScope, []);
+        scopeTracking.delete(propKey);
+        kvStore.delete(key);
+        listeners.delete(key);
       }
     };
 
     const setupListeners = () => {
-      if (trackAndIsolate && initialValue === undefined) {
+      if (trackAndIsolate) {
         console.log("setupListeners", key);
       }
       if (!listeners.has(key)) {
@@ -106,7 +102,7 @@ export const createKvStore = (
     };
 
     const cleanupListeners = () => {
-      if (trackAndIsolate && initialValue !== undefined) {
+      if (trackAndIsolate) {
         console.log("cleanupListeners", key);
       }
 
@@ -138,13 +134,10 @@ export const createKvStore = (
           key = thisScope;
         }
         console.log("setting scope and value", key);
-        if (key === null) debugger;
-        if (!key) return;
       }
-      if (key === "inputValue") {
-        console.log("FUCK");
-        debugger;
-      }
+
+      if (!key) return;
+
       kvStore.set(key, newValue);
       persistent && localStorage.setItem(lsKey, JSON.stringify(newValue));
       listeners.get(key).forEach((listener: any) => listener(newValue));
