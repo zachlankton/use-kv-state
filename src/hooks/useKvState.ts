@@ -30,29 +30,10 @@ export const createKvStore = (
     const lsKey = `${localStorageKey}.${key.toString()}`;
 
     if (trackAndIsolate && initialValue !== undefined && thisScope) {
-      console.debug(
-        "function called",
-        propKey,
-        key,
-        newScope,
-        thisScope,
-        count
-      );
       scopeTracking.set(propKey, thisScope);
     }
 
     const [state, setState] = useState<T>(() => {
-      if (trackAndIsolate) {
-        console.debug(
-          "setting state",
-          key,
-          initialValue,
-          kvStore.has(key),
-          propKey,
-          thisScope
-        );
-      }
-
       if (kvStore.has(key)) {
         return kvStore.get(key);
       }
@@ -80,10 +61,8 @@ export const createKvStore = (
             key = scopeTracking.get(propKey);
           }
 
-          console.debug("setting scope", key);
           setScope(key);
         } else {
-          console.debug("setupScope", thisScope || newScope);
           scopeTracking.set(propKey, thisScope || newScope);
           kvStore.set(thisScope || newScope, initialValue);
           //@ts-ignore
@@ -99,24 +78,13 @@ export const createKvStore = (
           key = scopeTracking.get(propKey);
         }
         scopeTracking.delete(propKey);
-        console.debug("setting scope (top level)", key);
+
         setScope(key);
       }
     };
 
     const cleanupScope = () => {
       if (trackAndIsolate && initialValue !== undefined) {
-        console.debug(
-          "cleanupScope",
-          kvStore.size,
-          scopeTracking.size,
-          listeners.size,
-          thisScope,
-          key,
-          propKey,
-          scopeTracking.get(propKey)
-        );
-
         scopeTracking.delete(propKey);
         kvStore.delete(key);
         listeners.delete(key);
@@ -124,9 +92,6 @@ export const createKvStore = (
     };
 
     const setupListeners = () => {
-      if (trackAndIsolate) {
-        console.debug("setupListeners", key);
-      }
       if (!listeners.has(key)) {
         listeners.set(key, []);
       }
@@ -134,10 +99,6 @@ export const createKvStore = (
     };
 
     const cleanupListeners = () => {
-      if (trackAndIsolate) {
-        console.debug("cleanupListeners", key);
-      }
-
       if (listeners.has(key)) {
         listeners.set(
           key,
@@ -179,7 +140,6 @@ export const createKvStore = (
         if (thisScope) {
           key = thisScope;
         }
-        console.debug("setting scope and value", key);
       }
 
       if (!key) return;
