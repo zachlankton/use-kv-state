@@ -23,15 +23,36 @@ export const createKvStore = (
     initialValue?: T
   ): [T, (newValue: T) => void] => {
     count++;
+
     let key = propKey;
     const newScope = `${propKey.toString()}.${count.toString()}`;
     const [thisScope, setScope] = useState<any>(null);
     const lsKey = `${localStorageKey}.${key.toString()}`;
 
+    if (trackAndIsolate && initialValue !== undefined && thisScope) {
+      console.debug(
+        "function called",
+        propKey,
+        key,
+        newScope,
+        thisScope,
+        count
+      );
+      scopeTracking.set(propKey, thisScope);
+    }
+
     const [state, setState] = useState<T>(() => {
       if (trackAndIsolate) {
-        console.log("setting state", key, initialValue, kvStore.has(key));
+        console.debug(
+          "setting state",
+          key,
+          initialValue,
+          kvStore.has(key),
+          propKey,
+          thisScope
+        );
       }
+
       if (kvStore.has(key)) {
         return kvStore.get(key);
       }
@@ -51,40 +72,51 @@ export const createKvStore = (
     });
 
     const setupScope = () => {
-      if (trackAndIsolate && initialValue !== undefined) {
-        key = scopeTracking.get(propKey);
-        scopeTracking.delete(propKey);
-        console.log("setting scope (top level)", key);
-        setScope(key);
-        setKVStore(initialValue);
-      }
+      if (trackAndIsolate) {
+        if (scopeTracking.has(propKey)) {
+          if (thisScope) {
+            key = thisScope;
+          } else {
+            key = scopeTracking.get(propKey);
+          }
 
-      if (trackAndIsolate && initialValue === undefined) {
-        if (scopeTracking.has(key)) {
-          console.log("setting scope", newScope);
-          key = scopeTracking.get(key);
+          console.debug("setting scope", key);
           setScope(key);
         } else {
-          console.log("setupScope", newScope);
-          scopeTracking.set(propKey, newScope);
-          kvStore.set(newScope, initialValue);
+          console.debug("setupScope", thisScope || newScope);
+          scopeTracking.set(propKey, thisScope || newScope);
+          kvStore.set(thisScope || newScope, initialValue);
           //@ts-ignore
-          key = newScope;
-          setScope(newScope);
+          key = thisScope || newScope;
+          setScope(thisScope || newScope);
         }
+      }
+
+      if (trackAndIsolate && initialValue !== undefined) {
+        if (thisScope) {
+          key = thisScope;
+        } else {
+          key = scopeTracking.get(propKey);
+        }
+        scopeTracking.delete(propKey);
+        console.debug("setting scope (top level)", key);
+        setScope(key);
       }
     };
 
     const cleanupScope = () => {
       if (trackAndIsolate && initialValue !== undefined) {
-        console.log(
+        console.debug(
           "cleanupScope",
           kvStore.size,
           scopeTracking.size,
           listeners.size,
           thisScope,
-          key
+          key,
+          propKey,
+          scopeTracking.get(propKey)
         );
+
         scopeTracking.delete(propKey);
         kvStore.delete(key);
         listeners.delete(key);
@@ -93,7 +125,7 @@ export const createKvStore = (
 
     const setupListeners = () => {
       if (trackAndIsolate) {
-        console.log("setupListeners", key);
+        console.debug("setupListeners", key);
       }
       if (!listeners.has(key)) {
         listeners.set(key, []);
@@ -103,7 +135,7 @@ export const createKvStore = (
 
     const cleanupListeners = () => {
       if (trackAndIsolate) {
-        console.log("cleanupListeners", key);
+        console.debug("cleanupListeners", key);
       }
 
       if (listeners.has(key)) {
@@ -118,9 +150,23 @@ export const createKvStore = (
       }
     };
 
+    const setValuesForScopedKvState = () => {
+      if (trackAndIsolate && initialValue !== undefined) {
+        setKVStore(initialValue);
+      }
+
+      if (trackAndIsolate && initialValue === undefined) {
+        const kvVal = kvStore.get(key);
+        if (kvVal) {
+          setState(kvVal);
+        }
+      }
+    };
+
     useEffect(() => {
       setupScope();
       setupListeners();
+      setValuesForScopedKvState();
 
       return () => {
         cleanupScope();
@@ -133,7 +179,7 @@ export const createKvStore = (
         if (thisScope) {
           key = thisScope;
         }
-        console.log("setting scope and value", key);
+        console.debug("setting scope and value", key);
       }
 
       if (!key) return;

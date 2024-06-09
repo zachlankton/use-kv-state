@@ -1,11 +1,13 @@
 import { DarkModeButton2 } from "./components/DarkModeButton2";
 import { DarkModeDisplay2 } from "./components/DarkModeDisplay2";
+import { InputTest } from "./components/Input";
 import { usePersistentKvState } from "./hooks/useKvState";
 
 function App() {
   const [show, setShow] = usePersistentKvState("show", false);
   const [show2, setShow2] = usePersistentKvState("show2", false);
   const [show3, setShow3] = usePersistentKvState("show3", false);
+  const [show4, setShow4] = usePersistentKvState("show4", false);
 
   return (
     <>
@@ -19,6 +21,18 @@ function App() {
           {show3 && <DarkModeDisplay2 />}
         </div>
       )}
+      <div>
+        <div>
+          <button onClick={() => setShow4(!show4)}>show/hide</button>
+        </div>
+        {show4 && (
+          <div>
+            <InputTest />
+            <InputTest />
+            <InputTest />
+          </div>
+        )}
+      </div>
     </>
   );
 }
