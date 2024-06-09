@@ -19,8 +19,8 @@ export const createKvStore = (
     localStorageKey: "usePersistentKvStateDefaultLocalStorageKey",
   }
 ) => {
-  const kvStore: KVStore = {};
-  const listeners: Listeners = {};
+  const kvStore = new Map();
+  const listeners = new Map();
 
   const useKVStore = <K extends PropertyKey, T>(
     key: K,
@@ -29,38 +29,39 @@ export const createKvStore = (
     const lsKey = `${localStorageKey}.${key.toString()}`;
 
     const [state, setState] = useState<T>(() => {
-      if (kvStore.hasOwnProperty(key)) {
-        return kvStore[key];
+      if (kvStore.has(key)) {
+        return kvStore.get(key);
       }
 
       if (persistent && localStorage.getItem(lsKey)) {
-        kvStore[key] = JSON.parse(localStorage.getItem(lsKey) as string);
-        return kvStore[key];
+        kvStore.set(key, JSON.parse(localStorage.getItem(lsKey) as string));
+        return kvStore.get(key);
       }
 
-      kvStore[key] = initialValue;
+      kvStore.set(key, initialValue);
       persistent && localStorage.setItem(lsKey, JSON.stringify(initialValue));
 
-      return kvStore[key];
+      return kvStore.get(key);
     });
 
     useEffect(() => {
-      if (!listeners[key]) {
-        listeners[key] = [];
+      if (!listeners.has(key)) {
+        listeners.set(key, []);
       }
-      listeners[key].push(setState);
+      listeners.get(key).push(setState);
 
       return () => {
-        listeners[key] = listeners[key].filter(
-          (listener) => listener !== setState
+        listeners.set(
+          key,
+          listeners.get(key).filter((listener: any) => listener !== setState)
         );
       };
     }, [key]);
 
     const setKVStore = (newValue: T) => {
-      kvStore[key] = newValue;
+      kvStore.set(key, newValue);
       persistent && localStorage.setItem(lsKey, JSON.stringify(newValue));
-      listeners[key].forEach((listener) => listener(newValue));
+      listeners.get(key).forEach((listener: any) => listener(newValue));
     };
 
     return [state, setKVStore];
