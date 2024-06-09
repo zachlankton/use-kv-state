@@ -1,17 +1,14 @@
 {
   "name": "use-kv-state",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.6",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./index.cjs",
+  "module": "./index.js",
   "exports": {
     ".": {
-      "import": "./dist/my-lib.js",
-      "require": "./dist/my-lib.umd.cjs"
+      "import": "./index.js",
+      "require": "./index.umd.cjs"
     }
   },
   "scripts": {
@@ -20,13 +17,13 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.2",
-    "redux": "^5.0.1"
-  },
-  "devDependencies": {
+    "redux": "^5.0.1",
+    "vite-plugin-dts": "^3.9.1",
     "@types/node": "^20.14.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
