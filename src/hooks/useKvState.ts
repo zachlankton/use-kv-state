@@ -30,7 +30,11 @@ export const createKvStore = (
     const lsKey = `${localStorageKey}.${key.toString()}`;
 
     if (trackAndIsolate && initialValue !== undefined && thisScope) {
-      scopeTracking.set(propKey, thisScope);
+      if (listeners.has(thisScope) && listeners.get(thisScope).length > 1) {
+        scopeTracking.delete(propKey);
+      } else {
+        scopeTracking.set(propKey, thisScope);
+      }
     }
 
     const [state, setState] = useState<T>(() => {

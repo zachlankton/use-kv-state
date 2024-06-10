@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useScopedKvState } from "../../hooks/useKvState";
 import { InputDisplay } from "./InputDisplay";
 
-export function InputTest() {
-  const [show, setShow] = useState(true);
-  const [inpValue, setInpValue] = useScopedKvState("inputValue", "test");
+export function InputTest2() {
+  const [show, setShow] = useState(false);
+  const [inpValue, setInpValue] = useScopedKvState("inputValue", "test2");
 
   return (
     <div>
