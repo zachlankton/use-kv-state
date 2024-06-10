@@ -14,35 +14,38 @@ function App() {
   return (
     <>
       <h1>Redux Test</h1>
-      <button onClick={() => setShow(!show)}>show/hide</button>
+      <button onClick={() => setShow(!show)}>show/hide 1</button>
       {show && (
         <div>
-          <button onClick={() => setShow2(!show2)}>show/hide</button>
+          <button onClick={() => setShow2(!show2)}>show/hide 2</button>
           {show2 && <DarkModeButton2 />}
-          <button onClick={() => setShow3(!show3)}>show/hide</button>
+          <button onClick={() => setShow3(!show3)}>show/hide 3</button>
           {show3 && <DarkModeDisplay2 />}
         </div>
       )}
 
+      <hr />
       <div>
         <div>
-          <button onClick={() => setShow4(!show4)}>show/hide</button>
+          <button onClick={() => setShow4(!show4)}>show/hide 4</button>
         </div>
+        <hr />
         {show4 && (
-          <div>
+          <div style={{ paddingLeft: 25 }}>
             <InputTest />
             <InputTest />
             <InputTest />
           </div>
         )}
       </div>
-
+      <hr />
       <div>
         <div>
-          <button onClick={() => setShow5(!show5)}>show/hide</button>
+          <button onClick={() => setShow5(!show5)}>show/hide 5</button>
         </div>
+        <hr />
         {show5 && (
-          <div>
+          <div style={{ paddingLeft: 25 }}>
             <InputTest2 />
             <InputTest2 />
             <InputTest2 />

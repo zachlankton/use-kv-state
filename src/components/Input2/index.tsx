@@ -9,15 +9,18 @@ export function InputTest2() {
   return (
     <div>
       <button onClick={() => setShow(!show)}>show/hide</button>
+      <hr />
       {show && (
-        <>
+        <div style={{ paddingLeft: 25 }}>
           <input
             value={inpValue}
             onChange={(e) => setInpValue(e.target.value)}
           />
           <InputDisplay />
           <InputDisplay />
-        </>
+          <InputDisplay />
+          <hr />
+        </div>
       )}
     </div>
   );
