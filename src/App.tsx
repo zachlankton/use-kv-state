@@ -2,6 +2,7 @@ import { DarkModeButton2 } from "./components/DarkModeButton2";
 import { DarkModeDisplay2 } from "./components/DarkModeDisplay2";
 import { InputTest } from "./components/Input";
 import { InputTest2 } from "./components/Input2";
+import { MultiSelectionGroup } from "./components/MultiSelect";
 import { useKvState, usePersistentKvState } from "./hooks/useKvState";
 
 function App() {
@@ -52,8 +53,29 @@ function App() {
           </div>
         )}
       </div>
+      <div>
+        <MyFirstComponent />
+        <MySecondComponent />
+      </div>
+      <div>
+        <MultiSelectionGroup />
+        <hr />
+        <MultiSelectionGroup />
+      </div>
     </>
   );
+}
+
+function MyFirstComponent() {
+  const [count, setCount] = useKvState<string, number>("count", 0);
+
+  return <button onClick={() => setCount(count + 1)}>Inc Count {count}</button>;
+}
+
+function MySecondComponent() {
+  const [count] = useKvState<string, number>("count");
+
+  return <p>Current count value: {count}</p>;
 }
 
 export default App;
