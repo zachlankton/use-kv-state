@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 
 interface KvStoreOptions {
@@ -42,7 +43,12 @@ export const createKvStore = (
         return kvStore.get(key);
       }
 
-      if (persistent && localStorage.getItem(lsKey)) {
+      if (
+        persistent &&
+        typeof window !== "undefined" &&
+        window.localStorage &&
+        localStorage.getItem(lsKey)
+      ) {
         kvStore.set(key, JSON.parse(localStorage.getItem(lsKey) as string));
         return kvStore.get(key);
       }
@@ -52,7 +58,11 @@ export const createKvStore = (
       }
 
       kvStore.set(key, initialValue);
-      persistent && localStorage.setItem(lsKey, JSON.stringify(initialValue));
+      persistent &&
+        typeof window !== "undefined" &&
+        window.localStorage &&
+        localStorage.setItem(lsKey, JSON.stringify(initialValue));
+
       return kvStore.get(key);
     });
 
@@ -149,7 +159,10 @@ export const createKvStore = (
       if (!key) return;
 
       kvStore.set(key, newValue);
-      persistent && localStorage.setItem(lsKey, JSON.stringify(newValue));
+      persistent &&
+        typeof window !== "undefined" &&
+        window.localStorage &&
+        localStorage.setItem(lsKey, JSON.stringify(newValue));
       listeners.get(key).forEach((listener: any) => listener(newValue));
     };
 
