@@ -50,7 +50,7 @@ export const createKvStore = (
         localStorage.getItem(lsKey)
       ) {
         kvStore.set(key, JSON.parse(localStorage.getItem(lsKey) as string));
-        return kvStore.get(key);
+        return initialValue;
       }
 
       if (trackAndIsolate) {
@@ -65,6 +65,18 @@ export const createKvStore = (
 
       return kvStore.get(key);
     });
+
+    useEffect(() => {
+      if (
+        persistent &&
+        typeof window !== "undefined" &&
+        window.localStorage &&
+        localStorage.getItem(lsKey)
+      ) {
+        kvStore.set(key, JSON.parse(localStorage.getItem(lsKey) as string));
+        return setState(kvStore.get(key));
+      }
+    }, []);
 
     const setupScope = () => {
       if (trackAndIsolate) {
