@@ -3,7 +3,7 @@ import { DarkModeDisplay2 } from "./components/DarkModeDisplay2";
 import { InputTest } from "./components/Input";
 import { InputTest2 } from "./components/Input2";
 import { MultiSelectionGroup } from "./components/MultiSelect";
-import { useKvState, usePersistentKvState } from "./hooks/useKvState";
+import { useKvState, usePersistentKvState } from "./hooks/useKvStateClient";
 
 function App() {
   const [show, setShow] = usePersistentKvState("show", false);

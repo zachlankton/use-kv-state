@@ -1,4 +1,4 @@
-import { usePersistentKvState } from "../hooks/useKvState";
+import { usePersistentKvState } from "../hooks/useKvStateClient";
 
 export function DarkModeButton2() {
   const [darkMode, setDarkMode] = usePersistentKvState("darkMode", false);

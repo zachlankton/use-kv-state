@@ -1,4 +1,4 @@
-import { useScopedKvState } from "../hooks/useKvState";
+import { useScopedKvState } from "../hooks/useKvStateClient";
 
 const options = [
   { id: 1, label: "Option 1", selected: false },

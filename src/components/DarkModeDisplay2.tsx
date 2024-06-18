@@ -1,4 +1,4 @@
-import { usePersistentKvState } from "../hooks/useKvState";
+import { usePersistentKvState } from "../hooks/useKvStateClient";
 
 export function DarkModeDisplay2() {
   const [darkMode] = usePersistentKvState("darkMode");

@@ -52,11 +52,14 @@ export function DarkModeButton() {
 
 # Docs
 
-This library exports three custom React hooks for managing key-value stores:
+This library exports the following hooks/functions for managing key-value stores:
 
+0. `createKvStore`
 1. `useKvState`
 2. `usePersistentKvState`
 3. `useScopedKvState`
+4. `usePersistentKvCookies`
+5. `getPersistentKvCookies`
 
 ## Usage
 
@@ -81,6 +84,30 @@ const [value, setValue] = usePersistentKvState(key, initialValue);
 - `initialValue` (optional): The initial value to be stored.
 
 Similar to `useKvState`, but the values are persisted in the browser's local storage.
+
+### `usePersistentKvCookies`
+
+```jsx
+const [value, setValue] = usePersistentKvCookies(key, initialValue);
+```
+
+- `key`: The key to identify the stored value.
+- `initialValue` (optional): The initial value to be stored.
+
+Similar to `usePersistentKvState`, but the values are persisted in the browser's local storage AND cookies.
+This is specifically targeted to work with Next.js App Router making local storage values accessible via 
+cookies on the server with the server version of this function that works in server components: `getPersistentKvCookies`
+
+### `getPersistentKvCookies`
+
+```jsx
+const value = getPersistentKvCookies(key, initialValue);
+```
+
+- `key`: The key to identify the stored value.
+- `initialValue` (optional): The initial value to be stored.
+
+Similar to `usePersistentKvCookies`, but for use directly inside server components. (Next.js App Router)
 
 ### `useScopedKvState`
 
@@ -175,6 +202,7 @@ This example demonstrates how the `useScopedKvState` hook can be used to manage 
 The `createKvStore` function accepts an optional configuration object with the following properties:
 
 - `persistent` (boolean, default: `false`): Determines if the values should be persisted in local storage.
+- `setCookies` (boolean, default: `false`): Determines if the values should be persisted in cookies (pairs with `persistent`)
 - `localStorageKey` (string, default: `'usePersistentKvStateDefaultLocalStorageKey'`): The key prefix used for storing values in local storage.
 - `trackAndIsolate` (boolean, default: `false`): Determines if the values should be scoped and isolated based on the component instance.
 

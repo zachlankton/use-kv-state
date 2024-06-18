@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useScopedKvState } from "../../hooks/useKvState";
+import { useScopedKvState } from "../../hooks/useKvStateClient";
 import { InputDisplay } from "./InputDisplay";
 
 export function InputTest2() {
