@@ -48,6 +48,22 @@ export function DarkModeButton() {
 }
 ```
 
+#### Next.js App Router dark mode persistent cookies to deal with flash of "light mode" and other server/client state sync tasks
+
+```jsx
+import { usePersistentKvCookies } from "use-kv-state";
+
+function DarkModeToggle() {
+  const [darkMode, setDarkMode] = usePersistentKvCookies("darkMode", false);
+
+  return (
+    <button onClick={() => setDarkMode(!darkMode)}>
+      Toggle Dark Mode: {darkMode ? "On" : "Off"}
+    </button>
+  );
+}
+```
+
 ---
 
 # Docs
